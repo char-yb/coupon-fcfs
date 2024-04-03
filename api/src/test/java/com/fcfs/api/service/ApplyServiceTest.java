@@ -44,6 +44,7 @@ class ApplyServiceTest {
 		ExecutorService executorService = Executors.newFixedThreadPool(32);
 
 		// 모든 요청이 끝날 때까지 기다리는 CountDownLatch를 활용
+		// CountDownLatch: https://dev-monkey-dugi.tistory.com/152
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
 		for (int i = 0; i < threadCount; i++) {
