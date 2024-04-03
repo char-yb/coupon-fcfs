@@ -47,7 +47,7 @@ class ApplyServiceTest {
 		// CountDownLatch: https://dev-monkey-dugi.tistory.com/152
 		CountDownLatch latch = new CountDownLatch(threadCount);
 
-		for (int i = 0; i < threadCount; i++) {
+		for (int i = 1; i <= threadCount; i++) {
 			long userId = i;
 			executorService.submit(() -> {
 				try {

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fcfs.api.domain.Coupon;
+import com.fcfs.api.producer.CouponCreateProducer;
 import com.fcfs.api.repository.CouponCountRepository;
 import com.fcfs.api.repository.CouponRepository;
 
@@ -16,6 +17,7 @@ public class ApplyService {
 
 	private final CouponRepository couponRepository;
 	private final CouponCountRepository couponCountRepository;
+	private final CouponCreateProducer couponCreateProducer;
 
 	public void apply(Long userId) {
 		// long count = couponRepository.count();
@@ -47,6 +49,7 @@ public class ApplyService {
 			return;
 		}
 
-		couponRepository.save(new Coupon(userId));
+		// couponRepository.save(new Coupon(userId));
+		couponCreateProducer.create(userId);
 	}
 }
