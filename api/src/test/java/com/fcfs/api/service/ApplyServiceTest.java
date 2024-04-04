@@ -63,6 +63,14 @@ class ApplyServiceTest {
 		// 모든 요청이 왔는 지 대기
 		latch.await();
 
+		/*
+		 일시적으로 Thread sleep을 준다.
+		 카프카를 사용한다면 API에서 직접 쿠폰을 생성할 때에 비해서 처리량을 조절할 수 있다.
+		 처리량을 조절함으로서 데이터베이스의 부하를 줄일 수 있다.
+		 다만, 테스트 케이스에서 쿠폰 생성까지 약간의 텀이 존재하는 단점이 존재한다.
+		 */
+		Thread.sleep(10000);
+
 		long count = couponRepository.count();
 		// 요청이 완료되면 생성된 쿠폰의 갯수 확인
 		assertThat(count).isEqualTo(100);
