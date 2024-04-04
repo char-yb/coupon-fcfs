@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fcfs.api.domain.Coupon;
 import com.fcfs.api.producer.CouponCreateProducer;
+import com.fcfs.api.repository.AppliedUserRepository;
 import com.fcfs.api.repository.CouponCountRepository;
 import com.fcfs.api.repository.CouponRepository;
 
@@ -18,8 +19,27 @@ public class ApplyService {
 	private final CouponRepository couponRepository;
 	private final CouponCountRepository couponCountRepository;
 	private final CouponCreateProducer couponCreateProducer;
+	private final AppliedUserRepository appliedUserRepository;
 
 	public void apply(Long userId) {
+
+		 /* 다른 방법으로 락을 걸어 처음에 쿠폰 발급 여부를 확인하는 방식이 있다.
+			쿠폰 발급 여부
+		 if (발급됐다면) return
+		 현재 API 에서 쿠폰 발급 여부를 판단하고 실제로 쿠폰 생성은 컨슈머에서 생성하고 있다.
+		 이 사이에는 시간차가 존재하며 그 시간 차이에 따라 한명이 두 개의 쿠폰이 발급되는 현상이 존재할 수 있다.
+
+		 Set의 자료구조는 중복이 허용되지 않기에 redis Set을 활용
+
+		 redis set은 sadd {key} {value} 명령어로 Set을 추가한다.
+		 */
+
+		Long apply = appliedUserRepository.add(userId);
+		// 1이 아니라면 이미 해당 user는 쿠폰 발급을 요청한 상태이다.
+		if (apply != 1) {
+			return;
+		}
+
 		// long count = couponRepository.count();
 		Long count = couponCountRepository.increment();
 
@@ -45,6 +65,7 @@ public class ApplyService {
 		 ngrinder는 부하 테스트 툴로 구성해놓는다면 서버에 단기간에 많은 트래픽을 발생시킬 수 있다.
 		 */
 
+
 		if (count > 100) {
 			return;
 		}
@@ -52,4 +73,5 @@ public class ApplyService {
 		// couponRepository.save(new Coupon(userId));
 		couponCreateProducer.create(userId);
 	}
+
 }
