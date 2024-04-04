@@ -10,10 +10,12 @@ import java.util.concurrent.Executors;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.fcfs.api.repository.CouponRepository;
 
 @SpringBootTest
+@ActiveProfiles("test")
 class ApplyServiceTest {
 
 	@Autowired
